@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     EDIT YOUR CONTENT IN THE <script id="site-data"> BLOCK BELOW
+     ============================================================ */
+
+  :root {
+    --paper: #EDEAE2;
+    --ink: #1C1B19;
+    --ink-soft: #5C5A53;
+    --ink-faint: #8A877E;
+    --accent: #7A2E2A;
+
+    --font-display: "Source Serif 4", Georgia, serif;
+    --font-mono: "JetBrains Mono", "SF Mono", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- Top-left nav ---------- */
+  nav.top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 28px 28px 0;
+    display: flex;
+    gap: 20px;
+    z-index: 10;
+  }
+
+  nav.top a {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 3px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  nav.top a:hover, nav.top a:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  nav.top a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* ---------- Center stage ---------- */
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 28px 80px;
+  }
+
+  .tweet-block {
+    max-width: 600px;
+    text-align: center;
+  }
+
+  .tweet-text {
+    font-size: clamp(1.4rem, 3.6vw, 2.1rem);
+    line-height: 1.45;
+    font-weight: 500;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  /* ---------- Simple page system for Works / Contact ---------- */
+  .page {
+    display: none;
+  }
+
+  .page.active {
+    display: block;
+  }
+
+  main.page-main {
+    align-items: flex-start;
+    padding-top: 140px;
+  }
+
+  .page-content {
+    max-width: 560px;
+    width: 100%;
+  }
+
+  .page-content h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0 0 28px;
+  }
+
+  .entries {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .entry {
+    display: block;
+    padding: 18px 0;
+    border-top: 1px solid #DAD5C8;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .entry:first-child { border-top: none; }
+
+  .entry-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .entry:hover .entry-title, .entry:focus-visible .entry-title {
+    color: var(--accent);
+  }
+
+  .entry-desc {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .contact-list li {
+    padding: 14px 0;
+    border-top: 1px solid #DAD5C8;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+  }
+
+  .contact-list li:first-child { border-top: none; }
+
+  .contact-list a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .contact-list a:hover, .contact-list a:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+  <nav class="top">
+    <a href="#works" data-page="works">works</a>
+    <a href="#contact" data-page="contact">contact</a>
+  </nav>
+
+  <!-- HOME: random daily tweet -->
+  <div class="page active" id="page-home">
+    <main>
+      <div class="tweet-block">
+        <p class="tweet-text" id="tweet-text">—</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- WORKS -->
+  <div class="page" id="page-works">
+    <main class="page-main">
+      <div class="page-content">
+        <h1>Works</h1>
+        <div class="entries" id="works-list"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="page" id="page-contact">
+    <main class="page-main">
+      <div class="page-content">
+        <h1>Contact</h1>
+        <ul class="contact-list" id="contact-list"></ul>
+      </div>
+    </main>
+  </div>
+
+<!-- ================================================================
+     EDIT EVERYTHING BELOW THIS LINE TO UPDATE YOUR SITE'S CONTENT.
+     ================================================================ -->
+<script id="site-data">
+
+  // ---- ALL YOUR TWEETS ----
+  // Add as many as you want. One is picked automatically each day,
+  // based on the date — same tweet for everyone, all day, until midnight.
+  const tweets = [
+    { text: `"Don't eat with people you wouldn't starve with."`, link: "https://x.com/guga/status/2070632149422633161" },
+    { text: `Did not entirely wipe me out.
+
+Big mistake.`, link: "https://x.com/guga/status/2068899731695116680" },
+    { text: `Judge the severity of an issue by the resources required to fix it. 
+
+Especially time.`, link: "https://x.com/guga/status/2066437656058236996" },
+    { text: `Laconism is pure efficiency.`, link: "https://x.com/guga/status/2064422097993023900" },
+    { text: `Winning in academics is easy mode.
+
+Try winning at life.`, link: "https://x.com/guga/status/2061091842326733010" },
+    { text: `Surpassing the parental instinct to nurture just enough to avoid spoiling the offspring.`, link: "https://x.com/guga/status/2061017553879593086" },
+    { text: `Defocus activities shouldn't compromise your sanity.`, link: "https://x.com/guga/status/2060839579515515168" },
+    { text: `Meaningless words bunched together with enthusiasm and all of a sudden they are impressed.`, link: "https://x.com/guga/status/2060829919374873016" },
+    { text: `You chose one of the hardest paths there is.
+
+Don’t expect many equals.
+
+Expect loneliness and the company of only a few.`, link: "https://x.com/guga/status/2058876536388804835" },
+    { text: `Aim ridiculously high.`, link: "https://x.com/guga/status/2043763911036485753" },
+    { text: `You have the right to monopolize a conversation only if you’re exceptionally insightful.
+
+Otherwise, just listen`, link: "https://x.com/guga/status/2043039379283660825" },
+    { text: `Being useful.
+
+Profitably.
+
+At scale.`, link: "https://x.com/guga/status/2041850075056369720" },
+    { text: `Your cognitive capacity will decline.
+
+Your mind will grow weaker.
+
+Write and create while you can so you have something to pass on to the next generation.`, link: "https://x.com/guga/status/2040350972162068710" },
+    { text: `Reputational cost can nullify everything, both past and future.
+
+Be wary.`, link: "https://x.com/guga/status/2040146405352710399" },
+    { text: `It doesn't matter what you feel like doing, it will still require cortical, top-down planning.
+
+The feelings just provide activation energy, you cannot derive from them the how.`, link: "https://x.com/guga/status/2039095703385883021" },
+    { text: `If you were truly honest with yourself, you’d realize that only a small minority of people are those you genuinely connect with. The vast majority are there to fill a social void and don’t meet your standards.
+
+The sooner you let go of the latter, the better.`, link: "https://x.com/guga/status/2039036851059646948" },
+    { text: `Maybe the very expectations of theirs that you're trying to meet are wrong to begin with.
+
+Maybe you can set better ones, the ones more aligned with your identity.`, link: "https://x.com/guga/status/2037868803770441882" },
+    { text: `You don't have to bend.
+
+Just adjust it to your temperament.`, link: "https://x.com/guga/status/2037821460778009039" },
+    { text: `Some works have a lot of cultural and zero explicative value.`, link: "https://x.com/guga/status/2037390166537421058" },
+    { text: `Your perfection might be someone's "good" or even baseline.`, link: "https://x.com/guga/status/2037279228916269382" },
+    { text: `"Imma call you my friend but I will not be inconvenienced whenever you're dealing with something and need my help"
+
+Hypocrisy 101`, link: "https://x.com/guga/status/2035419602675491150" },
+    { text: `With a greater memory comes a greater responsibility to filter out the stimuli.`, link: "https://x.com/guga/status/2034959698667950187" },
+    { text: `When you’re highly unemotional due to top-down control, make a conscious effort to express empathy verbally.`, link: "https://x.com/guga/status/2034567692401684634" },
+    { text: `Operationally concerned = actually doing something to solve it.`, link: "https://x.com/guga/status/2033536927761096807" },
+    { text: `"I NEED TO OPTIMIZE MY OPTIMIZED
+ΟΡΤΙΜΙΖΑΤΙΟΝ
+
+OPTIMALLY"
+
+Except it will lead to a suboptimal end.`, link: "https://x.com/guga/status/2031127221767663751" },
+    { text: `A lot of it is just clutching onto accidental opportunities`, link: "https://x.com/guga/status/2031126192951070850" },
+    { text: `The risky behavior is not as risky as you might feel.`, link: "https://x.com/guga/status/2030754023360659504" },
+    { text: `Gettinf to the breaking point is the top-down, cortical system shutdown.`, link: "https://x.com/guga/status/2030001652741059047" },
+    { text: `Every deep thinker is a first-principles thinker.`, link: "https://x.com/guga/status/1930575221376839821" },
+    { text: `Judgment is a problem-solving capacity. It comes from knowledge and can be applied to your own life and others'.`, link: "https://x.com/guga/status/1930565605284802726" },
+    { text: `Choose friends you'd attend economic forums with, not clubs and parties.`, link: "https://x.com/guga/status/1930553266833691024" },
+    { text: `If you were truly worthy of everything you want, you'd already have it.`, link: "https://x.com/guga/status/1929545441286185274" },
+    { text: `"Yeah, watch me" should be the default response to naysayers.`, link: "https://x.com/guga/status/1929528945885544588" },
+    { text: `You can become a polymath if equipped with good theories from the get-go.`, link: "https://x.com/guga/status/1929176351866573057" },
+    { text: `I'm expecting from you
+
+1. Lofty goals
+2. High intelligence 
+3. Uncompromising ethics`, link: "https://x.com/guga/status/1929144079549431839" },
+    { text: `Give me 10,000 iterations first and then we can talk about success.`, link: "https://x.com/guga/status/1929114368475635975" },
+    { text: `Many conspiracy theories explain everything so they explain nothing.`, link: "https://x.com/guga/status/1929113408034472011" },
+    { text: `Even if a marriage fails, having children is still a net positive.`, link: "https://x.com/guga/status/1929111730950394074" },
+    { text: `One’s status speaks for itself. 
+
+If you have to go out of your way to display it, it’s likely a sign of low status.`, link: "https://x.com/guga/status/1929109036693156177" },
+    { text: `The moment you attack the person instead of the idea, you’ve stopped seeking truth and started playing status games.`, link: "https://x.com/guga/status/1929066991014302066" },
+    { text: `Some poor people resent the rich because their success reflects their own shortcomings.
+
+To avoid being seen that way they resort to putting the rich down.`, link: "https://x.com/guga/status/1926348018883731795" },
+    { text: `Be judgmental (discerning) with people who matter to you.
+
+For everyone else, adopt a “do whatever you want” attitude.`, link: "https://x.com/guga/status/1924571259414655467" },
+    { text: `https://t.co/KPy45EWk8F`, link: "https://x.com/guga/status/1922838066068160692" },
+    { text: `The best way to raise children is to cover their burn rate and give them your attention while at the same time encouraging their ability to solve problems themselves. 
+
+Don't just solve their problems, teach them how to solve them themselves.`, link: "https://x.com/guga/status/1922836242250551543" },
+    { text: `Just like worrying alone doesn't do much, love alone doesn't do much either.
+
+Act on what worries you.
+
+Don't just say you love, show it.`, link: "https://x.com/guga/status/1920953149151388152" },
+    { text: `For the record:
+I will run in the 2052 Georgian elections—and win.`, link: "https://x.com/guga/status/1913647482845773971" },
+    { text: `They give you a poison and antidote so you will consume twice.`, link: "https://x.com/guga/status/1913642860039045198" },
+    { text: `It is acceptable to make mistakes. 
+
+However, repeatedly making the same error, and potentially rationalizing its insignificance, is unacceptable.`, link: "https://x.com/guga/status/1910949606571024731" },
+    { text: `If you think you have enough information to make a decision, do it now. You're not getting any younger.`, link: "https://x.com/guga/status/1909685220200399221" },
+    { text: `You can be intentionally monosyllabic with people you’re not interested in.
+
+It's a subtle way to signal disinterest and reject long-term association.`, link: "https://x.com/guga/status/1899802468487213341" },
+    { text: `The notion that you only live once, and therefore must try every other pointless nonsense, is often used by those who indulge frivolously. 
+
+It’s just low-key coping and rationalizing the misbehavior.`, link: "https://x.com/guga/status/1899782015844487350" },
+    { text: `The business can fail but the entrepreneur will never fail if he never stops.`, link: "https://x.com/guga/status/1899695564637274243" },
+    { text: `Suicidal compassion is not virtuous. 
+
+Establish your interests clearly and be prepared to say no and walk away.`, link: "https://x.com/guga/status/1897138900860391483" },
+    { text: `Want to absorb practical lessons from Christianity? Read the Jefferson Bible.`, link: "https://x.com/guga/status/1887828762462409194" },
+    { text: `Your attention is all you've got, don't dignify everyone with it.`, link: "https://x.com/guga/status/1885690313768914981" },
+    { text: `You can gauge how common an idea is by checking how many languages it appears in on Wikipedia.`, link: "https://x.com/guga/status/1885269946906599907" },
+    { text: `Remember, there are some people who base their worldviews on anime plots.
+
+Expect a lot of opinions not to make sense .`, link: "https://x.com/guga/status/1884989881371259349" },
+    { text: `For friendships, set the bar very high. 
+
+Be discerning. 
+
+You'll likely end up with fewer people in your network, but they'll be high-integrity, intelligent individuals worth your time.`, link: "https://x.com/guga/status/1884986854467895379" },
+    { text: `Being poor directly says something about your problem-solving ability.`, link: "https://x.com/guga/status/1884928808010014849" },
+    { text: `The ability to deliver is crucial in a world full of talk but short on action.`, link: "https://x.com/guga/status/1883035813740741073" },
+    { text: `If you truly understand something, you should be able to explain it. That's the key difference between knowing and understanding`, link: "https://x.com/guga/status/1875689870452289541" },
+    { text: `There are many things you can want but not many things you can pursue`, link: "https://x.com/guga/status/1874438752514568678" },
+    { text: `4 quarters
+52 weeks
+365 iterations
+
+2025 is ours`, link: "https://x.com/guga/status/1874214134797279381" },
+    { text: `Self-awareness is the highest virtue.`, link: "https://x.com/guga/status/1874149109269225782" },
+    { text: `In this day and age the ability to forget might be just as important (if not more important) as remembering. 
+
+There's much more information to discard than to save for the future.`, link: "https://x.com/guga/status/1872765395545014603" },
+    { text: `People who despise money—immediate red flag 🚩.
+
+They’re usually contemptuous of the successful.
+
+If money is the root of all evil, go live in Cuba or Venezuela.`, link: "https://x.com/guga/status/1872553877083759085" },
+    { text: `Take notes during conversations about things you don’t understand, and don’t hesitate to interrupt with questions.
+
+There’s no virtue in nodding along just to please the other person while pretending you understand.`, link: "https://x.com/guga/status/1872550004210163825" },
+    { text: `As a knowledge worker, I wouldn’t mix work-related and social/recreational apps on the same smartphone.
+
+Keep separate devices for each to reduce distractions and limit the surface area.`, link: "https://x.com/guga/status/1872549870097318335" },
+    { text: `Today, if you’re a young person and don’t speak English, Spanish, or Chinese, you’re missing out on vast amounts of information.
+
+Thanks to network effects, everyone will likely end up speaking one of these languages over time anyway.`, link: "https://x.com/guga/status/1872548369413140896" },
+    { text: `We are nothing than a series of decisions all packed up together throughout our lifetime.`, link: "https://x.com/guga/status/1871968361703411744" },
+    { text: `In order to be a proficient knowledge worker you must get used to keeping your body as still as possible and your brain as active as possible.`, link: "https://x.com/guga/status/1871221134231826575" },
+    { text: `My intrusive thoughts be like:
+
+1 hit, easy.
+1 hit, same.
+1 hit, no challenge.
+Finally... a real fight.`, link: "https://x.com/guga/status/1870457232091193689" },
+    { text: `There is no greater privilege than discovering David Deutsch's works in your 20s.`, link: "https://x.com/guga/status/1870023163280568608" },
+    { text: `Write a story where your most controversial takes are embodied in the antagonist. It's a clever way to avoid backlash-after all, it's the character, not you.`, link: "https://x.com/guga/status/1870017083926249782" },
+    { text: `I don’t get gastronomy talks. 'I went to this restaurant, ate this, that, and the other.'
+
+What’s so exciting about food?`, link: "https://x.com/guga/status/1870016100769145067" },
+    { text: `Literacy (language), numeracy (mathematics) and code (programming) and you are set for life.`, link: "https://x.com/guga/status/1870012959927210450" },
+    { text: `Saying 'I don't know' and 'I can be wrong' are signs of maturity.`, link: "https://x.com/guga/status/1869715598021959949" },
+    { text: `Debrainwash yourself from cultural and social falsehoods. 
+
+Have kids, and ensure they don't need to do the same.
+
+Correct their errors of thinking right in the beginning.`, link: "https://x.com/guga/status/1869666754617807182" },
+    { text: `Study epistemology. 
+
+Develop a bs detector. 
+
+Then absorb good explanations, separate them from the bad ones and stress test and verify it all by yourself.`, link: "https://x.com/guga/status/1869491049535791569" },
+    { text: `Expecting the wife to handle chores in a traditional household isn't practical really. It suggests her hourly rate is so low she's only good for solving those problems. 
+
+Do you really want your wife's problem-solving abilities reduced to just that?
+
+Delegate it to a third party.`, link: "https://x.com/guga/status/1869080292377629132" },
+    { text: `Can the person provide reasonable, constructive feedback? 
+
+Can they even listen and understand? 
+
+If not, don't waste your time. 
+
+Find others to talk with.
+
+don't cast pearls before swine.`, link: "https://x.com/guga/status/1869007584273088681" },
+    { text: `Money doesn't exist in real friendships.`, link: "https://x.com/guga/status/1868667662152392975" },
+    { text: `People dismiss bodyweight squats as a low-tier exercise
+
+Do 40 in a row and then tell me how you feel`, link: "https://x.com/guga/status/1868610531231428816" },
+    { text: `Create personalized knowledge bases like tweets (mini-blogging) or blogs.
+
+1. You will be able to store your thinking patterns for you to get back to them in the future. 
+2. You will acquire a high-resolution explicative skill - being able to explain complex concepts to a layman.`, link: "https://x.com/guga/status/1868284704274677763" },
+    { text: `This is how I use chatbot engines so you can copy me: 
+
+I assign each chat a specific task (like word definitions or coding) and give it a name.
+
+That way, every interaction feels more human and less exhausting.`, link: "https://x.com/guga/status/1868263925097402768" },
+    { text: `Rich people build numerous leverage points until they don't need to work. 
+
+It's not just passive income. 
+
+It's about gathering leverage and making it work.`, link: "https://x.com/guga/status/1868239417741365591" },
+    { text: `Everything you do gives two types of information:
+
+1. Descriptive - States the facts; what happened.
+2. Iterative - Suggests what should have happened; offers insights for improvement.
+
+The key is to never succumb to inaction.
+
+Like a shark, you must keep moving to survive.`, link: "https://x.com/guga/status/1867957640321491250" },
+    { text: `For instance:
+Molon Labe`, link: "https://x.com/guga/status/1867618248445112782" },
+    { text: `Study history instead of watching all these factually wrong movies.
+
+History is full of epic scenes. 
+
+You will hardly get bored.`, link: "https://x.com/guga/status/1867618065073963168" },
+    { text: `Even if you don't actively plan your days be reminded of the ROI mental model.
+
+(Not to applied on recreative time)`, link: "https://x.com/guga/status/1867614352511004837" },
+    { text: `Don't need your birthday felicitations if we don't truly have synergy. I'd rather know that you are on your journey out there somewhere, striving every day. I'll respect you for it and know that someday we may overlap. And if we do, it will be an authentic and genuine exchange.`, link: "https://x.com/guga/status/1867527073151246640" },
+    { text: `A sign of a bad comedian is using exaggerated voices to make their jokes pass.
+
+If you say something trully funny you don't need to scream at the top of your lungs.`, link: "https://x.com/guga/status/1867517770403094708" },
+    { text: `Be aware of people who claim the moral high ground by highlighting the contrast between themselves and average people.
+
+It's their self-fulfilling coping mechanism. 
+
+They will never amount to anything.
+
+They are not action-oriented, and full of wishy-washy desires.`, link: "https://x.com/guga/status/1867357992154255386" },
+    { text: `"The ultimate is when you walk into a library and you look at it up and down and you don’t fear any book. You know that you can take any book off the shelf, you can read it, you can understand it, you can absorb what is true, you can reject what is false"
+
+Naval`, link: "https://x.com/guga/status/1867356020718162042" },
+    { text: `It's okay to have a feeling of wanting to reach out to someone. 
+
+We're social beings after all.
+
+But don't pick on these people unconsciously. Don't make them just anyone.
+
+Be highly selective about the people that you decide to devote your time to.`, link: "https://x.com/guga/status/1867347097999265959" },
+    { text: `Video games are just problem solving. 
+
+It's just it's about solving problems that are artificial, not grounded in reality.
+
+You can feel the same kind of flow if you trully examine your inner desires and the problems you really would like to work on.`, link: "https://x.com/guga/status/1867121631652368759" },
+    { text: `Don't get a dog in your developmental phase for the God's sake...
+
+You shouldn't have time walking it three times a day and picking up its crap every time it sh*ts.`, link: "https://x.com/guga/status/1867096046360465823" },
+    { text: `Sure, books are great
+
+But they're just someone's collected thoughts on a slice of reality. Take time to study the person behind the ideas you're absorbing.`, link: "https://x.com/guga/status/1867095233768673382" },
+    { text: `If some people are already spending large chunks of their salary OnlyFans, it wouldn't be shocking if they started paying hundreds a month for an Al girlfriend subscription.`, link: "https://x.com/guga/status/1866444085000614021" },
+    { text: `Use comedy to disarm lunatic thinkers
+
+It shines an even brighter spotlight on their absurdity`, link: "https://x.com/guga/status/1866246529247322409" },
+    { text: `They view creatine intake with suspicion, while caffeine, a substance 20 times more powerful, gets a free pass.`, link: "https://x.com/guga/status/1866113663180087529" },
+    { text: `Some might hate one's father but he did give them life.
+
+That's something.`, link: "https://x.com/guga/status/1866007887233065428" },
+    { text: `Face reality as it is: ugly, unjust, gloomy and full of tragedy. 
+
+It's better to confront it than let it come to devour you.
+
+To weather it you will need your monster side.
+
+Something that growls from within: "bring it on!"`, link: "https://x.com/guga/status/1863689590906736874" },
+    { text: `The Machiavellis of history crush the Erasmus of history, claim the moral high ground, and ensure new generations never learn the truth.`, link: "https://x.com/guga/status/1863676740461056187" },
+    { text: `Sometimes I genuinely can't decide what's worse:
+
+being around evil people or stupid people.`, link: "https://x.com/guga/status/1863154771609215062" },
+    { text: `A cool thing about it:
+
+These two are mutually reinforcing, so it's not a tradeoff.`, link: "https://x.com/guga/status/1863150469536678073" },
+    { text: `Generating wealth is fine, but expanding knowledge is the real deal. Wealth stems from knowledge and has the most transformative power. 
+
+My 2 cents on it: 
+
+Allocate all your time to wealth creation to cover your burn rate, then double down on acquiring knowledge. (and share it)`, link: "https://x.com/guga/status/1863148528110866754" },
+    { text: `Soldiers soon will be obsolete.
+
+The idea of joining the army as a plan B will be thrown out of window.
+
+Infantry will be replaced by drones and robots battling each other on the frontlines.
+
+The days of saying, 'If it doesn't work out, I'll join the army,' are coming to an end.`, link: "https://x.com/guga/status/1862913606792147120" },
+    { text: `Hong Kong couldn't stand up for their freedom because they didn't have the right to bear arms and they got annexed. 
+
+If Georgia wants to break free from governmental tyranny, they need to arm themselves.
+
+That's the only way to stop these oppressors, with tooth and nail.`, link: "https://x.com/guga/status/1862611128561344667" },
+    { text: `Few things are as cringeworthy as someone boasting about what they could have been in some hypothetical past.`, link: "https://x.com/guga/status/1858409614938706266" },
+    { text: `"It is a shame for a man to grow old without seeing the beauty and strength of which his body is capable"
+
+Socrates https://t.co/r2ST1BVf3H`, link: "https://x.com/guga/status/1848486799481704937" },
+    { text: `These red pill stoics bro.
+
+Fuck off.`, link: "https://x.com/guga/status/1844791322885926962" },
+    { text: `Hormozi is leading the generation of sharks.
+
+We've got the frames.
+
+We hold the advantage.
+
+We’re gonna take over.
+
+And nothing’s stopping us.`, link: "https://x.com/guga/status/1840230174085853501" },
+    { text: `Hate is emotionally demanding, cultivate indifference instead`, link: "https://x.com/guga/status/1833098423127457958" },
+    { text: `Show me your calendar and I'll tell you who you are`, link: "https://x.com/guga/status/1829205944158564661" },
+    { text: `Shrink them into irrelevance.
+
+Be ruthless.
+
+Grow exponentially and forget their existence altogether. 
+
+That's the best form of revenge there is.`, link: "https://x.com/guga/status/1829198281840439386" },
+    { text: `Common sense isn't common practice. 
+
+If everyone exercised it—by eating clean, training regularly, and getting a full night's sleep—we could eliminate much of life's suffering.
+
+It's always been simple, it's the sticking to it part that is hard.`, link: "https://x.com/guga/status/1827695856264298672" },
+    { text: `Don't social-signal your damn trainings unless you've been doing it for at least a year.`, link: "https://x.com/guga/status/1827680104161390931" },
+    { text: `Don't take it too seriously pal;)
+
+Know what you want.
+Know how to get it.
+And enjoy the process.`, link: "https://x.com/guga/status/1827679175957745762" },
+    { text: `Faith is powerful and being religious can be a source of strength.
+
+But surrendering all your personal agency and justifying your misery as 'God's plan' is a foolish and cowardly act.
+
+And I can hardly believe that an ideal God would encourage such passivity.`, link: "https://x.com/guga/status/1827673905319874754" },
+    { text: `Financial liberty, in a way, can be translated into having a self-paced work schedule.`, link: "https://x.com/guga/status/1824399341240336587" },
+    { text: `The conversations with vane social signaling 🚩🚩`, link: "https://x.com/guga/status/1821927048518025411" },
+    { text: `If you're young just train man!
+
+Don’t you want to outlive the average person by two decades? 
+
+I can’t emphasize this enough`, link: "https://x.com/guga/status/1821177964211663351" },
+    { text: `Passion is overvalued. 
+
+The skill level:flow state ratio is undervalued.`, link: "https://x.com/guga/status/1821177191364993219" },
+    { text: `It's either implementation or exposing to information for mental masturbation`, link: "https://x.com/guga/status/1805345058784153926" },
+    { text: `Life is an iterative process.
+
+A month consists of 30 iterations in the form of days.
+
+It's okay to call it a day, so in the next one, you can come back fresher than ever, ready to kill it.`, link: "https://x.com/guga/status/1796986247543448034" },
+    { text: `A great deal of contrast I feel when I see hangovers of my age as I do my morning run`, link: "https://x.com/guga/status/1796804681181602178" },
+    { text: `The combat ability is 100-fold more important than handsomeness in men.
+
+Like, who cares if you look all fancy and spruced up if I can smash your skull with one blow in front of your girl.`, link: "https://x.com/guga/status/1796752573132620258" },
+    { text: `Do the removal properly and the goal-striving mechanism will find its outlet.
+
+It must.`, link: "https://x.com/guga/status/1796747515636728023" },
+    { text: `"Can there be a sin so great to exhaust the power of God to forgive?"
+
+Josef Fritzl?
+
+Carl Panzram?`, link: "https://x.com/guga/status/1795558258251342328" },
+    { text: `The poverty won't be an issue
+
+There will be more people dying from obesity than from starvation
+
+Just wait few decades from now.`, link: "https://x.com/guga/status/1795477374101786852" },
+    { text: `We all now that action brings result, Aka causal relationship between X and Y
+
+But what about inaction?
+
+The inaction can have just as much weight in the equation as the action does
+
+Not acting is also a decision taken.`, link: "https://x.com/guga/status/1795153865613943037" },
+    { text: `Go outside and burn the money publicly 
+
+People will think you're out of your mind
+
+But what happens when you lay waste on your time? 
+
+Isn't time more important than money?`, link: "https://x.com/guga/status/1794777986232910216" },
+    { text: `When Trump moved to Cincinnati, he noticed a lot of heavy drinking behavior from other men involved in the real estate venture
+
+The first thing he thought was that he'd have a great deal of advantage
+
+remember that when you encounter people in your circle with hedonic tendencies.`, link: "https://x.com/guga/status/1794439249552392304" },
+    { text: `Stay away from socialist-leaning countries especially during your developmental phase. 
+
+Try to gravitate towards meritocracy-based, hard capitalist countries so you can receive monetary encouragement to pursue your ideals.`, link: "https://x.com/guga/status/1794042605702947220" },
+    { text: `Guidance ideally should come from your parents, but we don't live in an ideal world.
+
+However, you can still pick role models to emulate. 
+
+We don't choose our parents, but we can choose whose ideas we want to follow.`, link: "https://x.com/guga/status/1793775837965328476" },
+    { text: `You cannot run a NPO if you're not tax-exempt.
+
+You're just exploiting the term into a lucrative cause.`, link: "https://x.com/guga/status/1792841898950025658" },
+    { text: `Caring about things intellectually and not emotionally is the greatest trait one can acquire.`, link: "https://x.com/guga/status/1775940378450972850" },
+    { text: `Make inconsequential but necessary conversations extremely time-constrained.
+
+It's a more subtle way of saying no.
+
+It's a win-win situation, they get to receive your attention and you get to keep most of it to place elsewhere.`, link: "https://x.com/guga/status/1775223049484210590" },
+    { text: `Do you question what percentage of the company's revenue they pay you?
+
+What percentage do you receive for the time and energy you invest?
+
+People just want to earn their money by doing X
+
+They rarely question the underlying processes behind it`, link: "https://x.com/guga/status/1774849555231588657" },
+    { text: `Time's on your side
+
+Allow it to work for you
+
+Be consistent and patience with your work and time will magnify the results.`, link: "https://x.com/guga/status/1773734980205555966" },
+    { text: `Reject ego.
+
+Enforce self-esteem.
+
+Ego can be undeserving.
+
+Self-esteem must be built.`, link: "https://x.com/guga/status/1772711288755388836" },
+    { text: `There is nothing worse than laying waste to your potential for temporal security and comfort.
+
+It's the quiet desperation that ruins the lives of many.`, link: "https://x.com/guga/status/1771578805980700743" },
+    { text: `In your formative phase, decline all of the low-bandwitch sources of knowledge.`, link: "https://x.com/guga/status/1771233553470087595" },
+    { text: `Adaptation = Success in your environment 
+
+Success = The definition you choose to give to it
+
+Choose your definition, it's critical.
+
+At the end of the day, you need to know whether it was a good or a bad day.`, link: "https://x.com/guga/status/1770888367133130808" },
+    { text: `Stagnancy is an ILLUSION.
+
+Time isn't stagnant. 
+
+If you're not moving forward, that automatically means falling behind. 
+
+You gotta evolve or you just gonna die off...`, link: "https://x.com/guga/status/1770533807038304587" },
+    { text: `We moderate how we act knowing someone is watching. 
+
+Be your own first observer.
+
+Observe yourself long enough and you'll trully know who you are.`, link: "https://x.com/guga/status/1770091127879700706" },
+    { text: `Guard your truth with everything you've got.
+
+What is unthinkable can become policy very soon.
+
+Stand your ground firmly and don't tolerate the intolerable.`, link: "https://x.com/guga/status/1769316496054833528" },
+    { text: `Do not recite poetry to one who is not a poet.
+
+Read it again.`, link: "https://x.com/guga/status/1769193783957115094" },
+    { text: `You own your house, for now.
+
+In an extreme economic distress your own house will be taken away from you in the blink of an eye.`, link: "https://x.com/guga/status/1769074571234165119" },
+    { text: `Training is the most mutually-reinforcing positive habit one can have.
+
+If you train you cannot drink.
+
+If you train you cannot smoke.
+
+If you train you cannot take drugs.`, link: "https://x.com/guga/status/1768369203646476675" },
+    { text: `Taking cold showers is one of the small habits that make a huge difference.
+
+Like, take 30 sec of cold shower and you can have hours of long-lasting effect on your energy and happiness.`, link: "https://x.com/guga/status/1765589232452596220" },
+    { text: `Much of life is determined.
+
+There can be no responsibility if there's no knowledge to exercise it.
+
+Sadly, many people are conditioned even before realizing that they can acquire knowledge and exercise responsibility.`, link: "https://x.com/guga/status/1764986761854218311" },
+    { text: `How to discard people professionally:
+
+"The return on investment of my time I'm getting with you is very low to zero."`, link: "https://x.com/guga/status/1762919241605402989" },
+    { text: `Internally establish clear goals.
+
+Concentrate on them over a long enough time frame.
+
+Success will naturally follow as a byproduct.`, link: "https://x.com/guga/status/1762175757151810039" },
+    { text: `Choose your activation energy (dream), mass (goal) and time horizon.
+
+Add in patience there and you're set.`, link: "https://x.com/guga/status/1761824389341819136" },
+    { text: `If you want it, go and pursue it.
+
+If you don't want to pursue it then you're just fantasizing about it.
+
+Don't confuse these two.`, link: "https://x.com/guga/status/1761821242330431503" },
+    { text: `In a virtuous cycle, why associate with those in a vicious cycle`, link: "https://x.com/guga/status/1761128140049408333" },
+    { text: `If the person is too deep in their self-reinforcing downward spiral then just mind your own business. 
+
+You cannot save them.
+
+They don't want to be saved.`, link: "https://x.com/guga/status/1760726237536997666" },
+    { text: `The moment you get inspiration, map out a long-term plan to follow it.
+
+Otherwise, it will be just an activation energy that will fade away within a few days.`, link: "https://x.com/guga/status/1760363828489937373" },
+    { text: `Hard work in physical training must be manifested in consistency, rather than a one-day intensive effort.`, link: "https://x.com/guga/status/1760009021480681666" },
+    { text: `Pomodoro geeks be thinking that human brain only can focus for 25 minutes...`, link: "https://x.com/guga/status/1759653830185394557" },
+    { text: `Your inner chimp needs your help.
+
+Help it to achieve its desires.
+
+It will reward you with enormous energy to pursue whatever thing it can be after.`, link: "https://x.com/guga/status/1759284652471116080" },
+    { text: `Virtually all of the modern music is letting your limbic system run amok and then writing lyrics around it.`, link: "https://x.com/guga/status/1758921870479417794" },
+    { text: `A tip to easily make your life miserable. 
+
+Adopt an all-or-nothing approach to scheduling and exert constant, micro-level control over yourself.`, link: "https://x.com/guga/status/1758582684073214437" },
+    { text: `Playing video games is like fighting for a seat on the Titanic.
+
+Go man, kill it!`, link: "https://x.com/guga/status/1757842243736514837" },
+    { text: `Quarterly meetings with my wife and reports about the overall marriage performance 📈`, link: "https://x.com/guga/status/1757479894202699993" },
+    { text: `Stressful things are problems.
+
+Problem is whatever is salient to you.
+
+Joe failing in school matters only if he's your son, right?
+
+The problem can be of 3 types - direct control (you), indirect control (others), and no control.
+
+This scheme has helped me a lot.`, link: "https://x.com/guga/status/1757116885613564056" },
+    { text: `Think and Grow Rich is extremely outdated. 
+
+Stop mentioning it for God's sake.`, link: "https://x.com/guga/status/1756395131870064704" },
+    { text: `Iteration over repetition, ALWAYS!
+
+you're here to improve, not to waste your goddamm life.`, link: "https://x.com/guga/status/1756101436432150806" },
+    { text: `The world does give you feedback.
+
+It just takes 5 to 10 years.
+
+You just need patience.`, link: "https://x.com/guga/status/1755305573019464112" },
+    { text: `Have both reinforcing (positive) and discouraging (negative) self-imposed feedback loops.
+
+There's something good you did today; reinforce it.
+
+There's something bad you did today or something that you did poorly; discourage it.`, link: "https://x.com/guga/status/1754580793056206928" },
+    { text: `Always be eager to take concepts out from their original disciplines and then apply it in pragmatic ways.
+
+Situate them in real-world examples or just forget them.`, link: "https://x.com/guga/status/1754218361053986988" },
+    { text: `The news and data aren't the same.
+
+Observe data.
+
+Ignore most of the news.`, link: "https://x.com/guga/status/1753855970478883248" },
+    { text: `The sequence goes like this:
+
+Knowledge - judgement - Decision-making`, link: "https://x.com/guga/status/1753463369867157969" },
+    { text: `Combat the frustration of highly demanding tasks by dissecting them and breaking them down.
+
+That's how you eat an elephant.`, link: "https://x.com/guga/status/1752754346767401072" },
+    { text: `To be taken seriously at 20 on events, go for a powerful look.`, link: "https://x.com/guga/status/1752021421163741650" },
+    { text: `Reading books is not that big of a deal.
+
+Having figured out which books are S tier is.`, link: "https://x.com/guga/status/1751659210293539030" },
+    { text: `Have clearly outlined definitions. 
+
+Refine them. They might be based on illogical societal assumptions. 
+
+Studying is not something that only happens in schools.
+
+Working is not something that only occurs in jobs.`, link: "https://x.com/guga/status/1751296594480181646" },
+    { text: `BS detection series
+
+"Gratitude in 20s"
+
+You meek little dork.
+
+Here &amp; now chemicals need to be suppressed if not ignored at all.
+
+Yea the "you" part matters but only in the future.
+
+You're nothing but potential cuz you've not achieved shit yet, like, bro, what do you know?`, link: "https://x.com/guga/status/1750930936458359106" },
+    { text: `BS detection series
+
+"Stress lowers your testosterone"
+
+What? I cannot even think about something that is more untrue.`, link: "https://x.com/guga/status/1750571906623799679" },
+    { text: `Diet should be your optimal fuel. 
+
+Who gives a fuck if the food is tasty or not?
+
+Unless you're earning 10k a month it bears no relevance.
+
+YOU DON'T HAVE TIME FOR THIS!
+
+Get your micronutrients covered and get back to fucking work you DORK!`, link: "https://x.com/guga/status/1750214378496958841" },
+    { text: `How to live a good life? Basically three things:
+
+Clarify where you are, what to avoid, and what to do.
+
+Here's a little trick: 
+Combining the first two ensures success in itself.`, link: "https://x.com/guga/status/1749854584753774812" },
+    { text: `Study CP/P balance.
+
+Then you'll divide everything into things that either elevate your overall CP or are P themselves.`, link: "https://x.com/guga/status/1749492283001413785" },
+    { text: `The vision can be as big as you want it to be – becoming a millionaire, a great father, a public figure, etc. Whatever.
+
+But the planning part of it needs to be realistic, otherwise it won't materialize itself.
+
+You can't straight away work 14 hours a day. 
+
+It's ludicrous.`, link: "https://x.com/guga/status/1749128695854371173" },
+    { text: `A good grasp of math, statistics, and logic, and all of a sudden most people don't make sense.`, link: "https://x.com/guga/status/1748767423149342903" },
+    { text: `The law of reciprocity helps you to filter people.
+
+Don't be afraid of going out of your way to help people. If they're truly righteous, they will, at least, attempt to help you when you need it.
+
+If they're not, then you will surely know not to be friends with them.`, link: "https://x.com/guga/status/1748405069391802429" },
+    { text: `Lip servicing to yourself is the worst thing you can do.
+
+Small defeats accumulate rapidly and destroy your inner self-respect.
+
+You will have no ego nor any masculine frame if you don't respect yourself.`, link: "https://x.com/guga/status/1748050318749774240" },
+    { text: `Start with foundational books.
+
+Create a tier list. 
+
+Revisit S-tier books repeatedly and discard the rest.`, link: "https://x.com/guga/status/1747690016254370042" },
+    { text: `It's tragic that I've spent roughly the last 20% of my lifetime deliberately trying to forget the 80% of nonsense instilled in me during my childhood. (Georgia in nutshell?)
+
+My kids won't go through the same.
+
+They'll be straight up killers from the very beginning.`, link: "https://x.com/guga/status/1747325420855324805" },
+    { text: `Why watch a movie that has no intellectual value in it? What's the point?`, link: "https://x.com/guga/status/1746588148451135855" },
+    { text: `I use fasting as a punishment. 
+
+Didn't hit the milestone? I'll go for 36 hours no food.
+
+You gotta teach your body that if there's no result there's no reward either. That's how you gotta be.`, link: "https://x.com/guga/status/1746238261377257923" },
+    { text: `Don't discard people immediately, give them like 10 minutes. 
+
+If they've not come up with something insightful just tell em to fuck off.`, link: "https://x.com/guga/status/1745858935129620525" },
+    { text: `Being notorious and well-known is better than dying as an unknown quantity isn't it?`, link: "https://x.com/guga/status/1745513472970858668" },
+    { text: `Stop running around remembering other people's birthdays, the fucks wrong with you. 
+
+Occupy your mind with relevant information!!`, link: "https://x.com/guga/status/1745144690565931073" },
+    { text: `It should not be regrettable. You had incomplete information.`, link: "https://x.com/guga/status/2029650338291073337" },
+    { text: `A few good qualities is just not enough.`, link: "https://x.com/guga/status/2029636305546793288" },
+    { text: `It's sometimes fun to stress-test the opportunists nearby. Filters out all the fair- weather friends fast.`, link: "https://x.com/guga/status/2028939195020951808" },
+    { text: `They need the most ridiculous examples to make themselves look righteous and worthy.`, link: "https://x.com/guga/status/2028868101387829662" },
+    { text: `Relativistic, but, only of your own track record.`, link: "https://x.com/guga/status/2028806215543705991" },
+    { text: `Iteration necessarily involves prior reflection`, link: "https://x.com/guga/status/2028459633447145753" },
+    { text: `Be a hunter.
+
+Scan the environment and hunt.`, link: "https://x.com/guga/status/2028053712896221352" },
+    { text: `Mostly 5 minutes of listening is enough to determine if any utterance there is worth giving.`, link: "https://x.com/guga/status/2027979137680367731" },
+    { text: `Threshold for informed action and success are correlative.`, link: "https://x.com/guga/status/2027724524943229248" },
+    { text: `"I have enough information to cut the compounding and discard you."`, link: "https://x.com/guga/status/2027250787089285588" },
+    { text: `Luck exists it's just in your best interest not to believe in it.`, link: "https://x.com/guga/status/2025562230322757943" },
+    { text: `They may give you advice with the best intentions in the world, but if they’re incompetent, you’ll still suffer the consequences if you follow it.
+
+Mostly what you want in those situations from that kind of people is emotional support and resources, not information.`, link: "https://x.com/guga/status/2025101176232968238" },
+    { text: `Be aware od your sensory input. What are you consuming?
+
+Be extremely judgmental about it, utterly ruthless! 
+
+They're talking about the latest football game? Who gives a fuck, get back to work.`, link: "https://x.com/guga/status/1744798543133438057" },
+    { text: `Workaholism is criticized despite work being an effortful activity for achieving results. Funny.
+
+Don't you wanna achieve your results you little dork?`, link: "https://x.com/guga/status/1744451512313512364" },
+    { text: `If you have an uncluttered calendar there's something wrong with you.`, link: "https://x.com/guga/status/1744065469038891159" },
+    { text: `Movies, video games, porn, loser friend circle just represent friction that fucks up your momentum.
+
+To gain momentum you've got to cut thse things out.`, link: "https://x.com/guga/status/1743702313502433703" },
+    { text: `Technology increases performance.
+
+Running away from it is like asking to be less wealthy.`, link: "https://x.com/guga/status/1743339146859642885" },
+    { text: `Numerous ways exist to perceive reality.
+
+Pick one and stick to it.
+
+Constant changes diminish its effectiveness.`, link: "https://x.com/guga/status/1742977596151755165" },
+    { text: `Speed is okay, but don't compromise quality.
+
+Maintain quality while increasing speed. 
+
+If unable to do so, stick with your current pace until ready.`, link: "https://x.com/guga/status/1742608623237226876" },
+    { text: `It has never been that easy.
+
+Lower your basal dopamine levels and witness how your life changes for the better.`, link: "https://x.com/guga/status/1742272974277738953" },
+    { text: `Have a good work ethic but don't be a hamster in a wheel.
+
+Know where you're headed and then work as hard as you can.
+
+You don't wanna be focused on moving so fast that you lose the aim.`, link: "https://x.com/guga/status/1741890047798919670" },
+    { text: `In physics it's easier to reduce resistance than using more force.
+
+Just remove cookies from your environment to reduce the mental effort needed to resist them.`, link: "https://x.com/guga/status/1741527222404427894" },
+    { text: `Kids are high energy by DEFAULT
+
+The fuck you mean by ADHD? THEY'RE FUCKING KIDS`, link: "https://x.com/guga/status/1741164832777195817" },
+    { text: `Lashing out at provocation is lame.
+
+Violence, in order to be truly successful, must come from strategic and planned perspective - violence inflicted for a purpose.
+
+Spontaneous aggression is pretty disadvantageous.`, link: "https://x.com/guga/status/1740800019564056976" },
+    { text: `If you're not feeling the perpetual need to identify a goal and calculate a way to reach it then what the fuck are you doing here mate?`, link: "https://x.com/guga/status/1740435485489783247" },
+    { text: `Addicts get clean.
+Dieters lose weight.
+
+Sometimes we switch off the TV, get off the couch, and go for a run.
+
+People change.`, link: "https://x.com/guga/status/1740076023625175396" },
+    { text: `Two main disciplines that will give you all about human behaviour and the knowledge of knowledge 
+
+Psychology and neuroscience`, link: "https://x.com/guga/status/1739715273215656165" },
+    { text: `"Let's just trust the government, it cares about our welfare" https://t.co/DFBhE7Fmb6`, link: "https://x.com/guga/status/1739367244549791779" },
+    { text: `Do you wanna really piss off someone?
+Poke them with something that they have no control over
+
+That's why the old people hate talking about how old they are, even if they're like 40, they won't ever mention it cuz age is irreversible.`, link: "https://x.com/guga/status/1738990504149209360" },
+    { text: `Stress doesn't mean stressful.
+
+You can have a lot of stressors and not find it stressful
+
+Change semantics!
+
+Frame it differently!`, link: "https://x.com/guga/status/1738628234525155499" },
+    { text: `The quality output from an activity should be the driving force all the time. 
+
+Always keep an end goal.`, link: "https://x.com/guga/status/1738265737569902963" },
+    { text: `Haves and have-nots.
+
+Gotta make a breakthrough right now; there might not be another chance. https://t.co/D5u32dCe45`, link: "https://x.com/guga/status/1737903227469705636" },
+    { text: `The amount you read and the hours you put in are vanity metrics, social signaling
+
+What are your results?
+SHOW ME THE RESULTS.`, link: "https://x.com/guga/status/1737540988921376897" },
+    { text: `There are drugs out there that people have no idea...
+
+Give someone MPTP and they'll have irreversible brain cell damage 
+
+Back in the days they used to straight up kill people, now they can covertly give you some pills and you're basically a zombie`, link: "https://x.com/guga/status/1737178625793786046" },
+    { text: `Why would a therapist focus on fixing your life if he gets paid on hourly rate ?
+
+If you could be treated with only just two sessions of bla bla bla then he'd be no longer needed!
+
+It's survival mode for them dummy! It's either extending the sessions or not being able to provide.`, link: "https://x.com/guga/status/1736816467075584262" },
+    { text: `Be aware of red pill extremists
+
+Don't buy into all conspiracy theories. https://t.co/tuPjBSjnyi`, link: "https://x.com/guga/status/1736450490286661965" },
+    { text: `You're so protective of your ideas as if you hadn't copied them from someone else...
+
+DORK.`, link: "https://x.com/guga/status/1736091741575389455" },
+    { text: `How can u be a youngster coasting through life and not physically train? Ain't it an ethical crime?`, link: "https://x.com/guga/status/1735710406830633031" },
+    { text: `If I had to summarise all the time management books I've read it'd be:
+
+Plan, Execute, Reflect, Iterate`, link: "https://x.com/guga/status/1735358436689191208" },
+    { text: `Engage in negative visualisation of what happens if you don't pull it off. 
+It will allow you to go beyond your cognitive abilities.`, link: "https://x.com/guga/status/1735210865987559856" },
+    { text: `Cause-effect relationships are the thing man...
+
+That's the foundational basis for logical thinking.`, link: "https://x.com/guga/status/1734637079420694822" },
+    { text: `Intellectual uptrend is slowly starting to fade away 
+
+The ones who realise that escape it and become extremely successful 
+
+The ones who don't get caught up in a perpetual misery and blindness`, link: "https://x.com/guga/status/1734279551826411786" },
+    { text: `Escape the permanent insanity 
+Turn off the TV
+Read books`, link: "https://x.com/guga/status/1733899241993429163" },
+    { text: `Starting something is hard, but so is stopping something. If you've been grinding out for days, weeks and months they won't stop you easily. trust me.`, link: "https://x.com/guga/status/1733553186156233001" },
+    { text: `2 საათიანი ყოველდღიური ვარჯიში შენ 24 საათის მხოლოდ 8% ია. https://t.co/o4wBe1n8nn`, link: "https://x.com/guga/status/1733192604513153219" },
+    { text: `30 წლიანი ჰიპოტეკა? Dork.`, link: "https://x.com/guga/status/1732830936566313095" },
+    { text: `გესმოდეთ ზედა-ვერტიკალურ, ჰორიზონტალურ და
+ქვედა- ვერტიკალურ ურთიერთობებს შორის განსხვავება`, link: "https://x.com/guga/status/1732467668534300737" },
+    { text: `ტოლერანტობა და ყველაფერზე თვალდახუჭულობა ერთმანეთში არ აგერიოთ`, link: "https://x.com/guga/status/1732109383083950411" },
+    { text: `იმაზე კონტრპროდუქტიული არაფერია ვიდრე იმის კითხვა რაც თქვენს მიზანთა მიღწევის პროცესს არ ააჩქარებს`, link: "https://x.com/guga/status/1731733797387764207" },
+    { text: `წერის ან ფიქრების არტიკულირების მნიშვნელობას ნუ ეხუმრებით. ადამიანები თავიანთ გონებას საუბრისას ან წერისას ალაგებენ.`, link: "https://x.com/guga/status/1731064964406747627" },
+    { text: `კვლევა-ძიებისკენ მიმართული საუბარი&gt;&gt;&gt;&gt;`, link: "https://x.com/guga/status/1730655589842157700" },
+    { text: `თუ თქვენი ცხოვრება იდეალური არ არის, გამოდის, რომ საკმარისი სულაც არ გცოდნიათ.`, link: "https://x.com/guga/status/1730290817552531800" },
+    { text: `იყო კი მოვლენების ასე განვითარება მართლაც მოულოდნელი? ხშირ შემთხვევაში პასუხია - არა. უბრალოდ თეორიების არქონის გამო ვერ შეძელით ფინალის წინასწარ განსაზღვრა`, link: "https://x.com/guga/status/1729921842750558457" },
+    { text: `ბევრი ადამიანის აზროვნება ქვიშაზეა აგებული და შემდეგ სწყინთ მათ ნათქვამს სერიოზულად რომ არ აღიქვამ`, link: "https://x.com/guga/status/1729721555725258849" },
+    { text: `Life is pretty hardcore.
+
+One bad mistake and you're out.`, link: "https://x.com/guga/status/2024912950251692132" },
+    { text: `If your interlocutor lacks the basic courtesy to listen without interrupting, they’re not worth your time.`, link: "https://x.com/guga/status/2023529482502762625" },
+    { text: `Be prepared to be crucified unjustly.
+
+Be prepared to be stabbed in the back by a friend.
+
+Be prepared to face the ugliest realities of life,
+
+and persevere all the same.`, link: "https://x.com/guga/status/2023523744313127240" },
+    { text: `Strip away your routines, cold showers, training, meditation, coffee, nutrition, sleep.
+
+How do you react? Does your agency bend?
+
+That’s the real test of life. 
+
+Anyone can meditate under a tree.`, link: "https://x.com/guga/status/2023522372746440801" },
+    { text: `Sometimes it’s better to keep the reasoning behind your actions to yourself.
+
+If the other party is incentivized to reject your explanation, they’ll do so out of self-interest.`, link: "https://x.com/guga/status/2022204788642132177" },
+    { text: `Bad books in wrong order with poor epistemology and you're forever intellectually lost beyond salvation.`, link: "https://x.com/guga/status/2018937123961995685" },
+    { text: `The world is a harsh place. Backstabbing, tragedy, injustice, envy, jealousy, treachery of the loved ones, inhuman treatment of nominally civilized, fake piousness and more.
+
+However the worst of them is the kind of hell that you brought yourself knowingly with your decisions.`, link: "https://x.com/guga/status/2018192666677117204" },
+    { text: `Be aware of people who are constantly cuddling you, pitying you, reminding you of your traumas and how great of a victim you are. 
+
+Deep down all they want is to suffocate you. Cripple you forever. Make you a helpless victim.
+
+"All men suffer, but not all men pity themselves."`, link: "https://x.com/guga/status/2017646951588675936" },
+    { text: `Don’t be reluctant to dismiss people. 
+
+It’s far better to do it early than to get entangled for years with someone whose standards of acceptable behavior don’t match yours.`, link: "https://x.com/guga/status/2015700029399282089" },
+    { text: `Being  well-grounded in epistemology makes you a dialectical wizard.`, link: "https://x.com/guga/status/1999360005066125351" },
+    { text: `Anxiety is just evolutionary, primitive failure assessment.`, link: "https://x.com/guga/status/1996958846292471887" },
+    { text: `They're excited, they want to share. 
+
+It's just the content of what they share is nearly worthless.`, link: "https://x.com/guga/status/1996955490325061726" },
+    { text: `When you feel lonely and tempted to reach out to someone who doesn’t meet your standards, resist the impulse.
+
+That's the worst reason for reaching out and the hardest to resist.`, link: "https://x.com/guga/status/1996699177468780646" },
+    { text: `To control anger first you must embrace it.`, link: "https://x.com/guga/status/1992905898831012188" },
+    { text: `Walking away without killing the disputant is one of the most valuable things the civilization has brought about.`, link: "https://x.com/guga/status/1991825745992356303" },
+    { text: `People who don't appreciate the present don't know the past.`, link: "https://x.com/guga/status/1991149595309617496" },
+    { text: `Cannibalism was once a natural state of being. Now it’s unthinkable.
+
+What stops you from believing the same can happen to war?`, link: "https://x.com/guga/status/1990867198881964200" },
+    { text: `The highest cost of a corrupted character is not the external reputation but the internal one.`, link: "https://x.com/guga/status/1989305458151108997" },
+    { text: `Grokipedia is the future`, link: "https://x.com/guga/status/1988692070215868911" },
+    { text: `Passively read the popular press, not high-tier books.
+
+When you encounter a term or concept you don’t understand, be willing to go down a three-hour rabbit hole to get to the bottom of it.
+
+Only then do you earn the right to say, ‘I’ve read it.`, link: "https://x.com/guga/status/1988024005333528947" },
+    { text: `Noise-to-signal differentiation only comes after prolonged exposure.
+
+In the beginning, you’ll inevitably subject yourself to a lot of noise.`, link: "https://x.com/guga/status/1987988945456820731" },
+    { text: `If you want an inferior spouse you might as well get a dog instead.`, link: "https://x.com/guga/status/1987982185597661558" },
+    { text: `Leisure doesn't exist in your 20s.`, link: "https://x.com/guga/status/1983118469043519578" },
+    { text: `Nurture in early age, nature later on.
+
+Provide environment early so that the latter can properly manifest itself.`, link: "https://x.com/guga/status/1973969386311659876" },
+    { text: `Many want to lead but don't know why they should be followed.`, link: "https://x.com/guga/status/1973968718029095205" },
+    { text: `You think, you know, you can see.`, link: "https://x.com/guga/status/1973968583639380211" },
+    { text: `Give advice only indirectly.`, link: "https://x.com/guga/status/1968766126218703132" },
+    { text: `Free events are not good prospects for finding free market defenders.`, link: "https://x.com/guga/status/1962112133010751893" },
+    { text: `There's no alpha male in the sky taking care of you.
+
+It's all you and your agency.`, link: "https://x.com/guga/status/1961635548822388775" },
+    { text: `One of the most entertaining thing is analyzing the content (movies, books, articles, etc.) you consumed a verylong time ago with new knowledge and mental models.`, link: "https://x.com/guga/status/1961628472352313724" },
+    { text: `At some point you'll learn to say "I'm not gonna spend my high level judgement time on this thing/person"`, link: "https://x.com/guga/status/1961625423881617644" },
+    { text: `Incompetent and arrogant is the worst combination.`, link: "https://x.com/guga/status/1961615942531911752" },
+    { text: `No wonder why Marx couldn't support himself and lived in a slum district for the rest of his life.`, link: "https://x.com/guga/status/1961025217473511558" },
+    { text: `Social conformity is extremely contagious.`, link: "https://x.com/guga/status/1957885191747203117" },
+    { text: `https://t.co/itW86wfLIe`, link: "https://x.com/guga/status/1956133442460246362" },
+    { text: `"If you're not everything you could be more people will suffer, more evil will remain unconstrained, more tyranny will reign."
+
+-Jordan Peterson`, link: "https://x.com/guga/status/1956133051886449065" },
+    { text: `Learning is always a moving target.`, link: "https://x.com/guga/status/1956101890577719504" },
+    { text: `Just as radical feminism stems from oppressive patriarchy, the belief in the blank slate stems from stark eugenics.
+
+Both are reactionary emergences at opposing extremes, and their very extremity increases the likelihood of error.`, link: "https://x.com/guga/status/1955356252218986735" },
+    { text: `The unhappy friend pulls the happy one down faster than the happy one can lift him up.`, link: "https://x.com/guga/status/1951913359038726281" },
+    { text: `Child rearing is implementing genetic and memetic replication at the same time.`, link: "https://x.com/guga/status/1949844188234739833" },
+    { text: `A friend never incurs a reputational cost on you.`, link: "https://x.com/guga/status/1949024662958072029" },
+    { text: `Once you're successful the people who rooted for you and helped you along the way should see their reciprocity returned to them a hundredfold.`, link: "https://x.com/guga/status/1948042393296466227" },
+    { text: `Do it for the legacy.`, link: "https://x.com/guga/status/1947925039518511378" },
+    { text: `There’s a huge financial incentive to be a Freudian psychoanalyst.
+
+You can keep saying 'See you next week' for years and keep charging.`, link: "https://x.com/guga/status/1947765782420611331" },
+    { text: `With all the overwhelming evidence, resisting secularism isn't easy.`, link: "https://x.com/guga/status/1947416291444461915" },
+    { text: `How can anyone still claim we're born as blank slates after all the separated identical twin studies?`, link: "https://x.com/guga/status/1947414914601259299" },
+    { text: `If are not going to be friends at least make them your clients.`, link: "https://x.com/guga/status/1946760420951273909" },
+    { text: `Negative people are psychological disease-causing agents.`, link: "https://x.com/guga/status/1946520858366783804" },
+    { text: `I tip my hat to all other grayscale users out there😁`, link: "https://x.com/guga/status/1945931673813635186" },
+    { text: `Anecdotes themselves without articulated and extrapolated lessons are of low to zero value.
+
+When telling stories try to emphasize what lesson they deliver.`, link: "https://x.com/guga/status/1945049016909037819" },
+    { text: `You can only apply corrective measures after taking a shot. Before that you have incomplete information. 
+
+Action generates information.`, link: "https://x.com/guga/status/1945037131467948509" },
+    { text: `If you say you'll start next week, you're giving up one of your 4,000 weeks that you're never going to get back.
+
+Start today.`, link: "https://x.com/guga/status/1945024187417948405" },
+    { text: `Complaining stems from an inaccurate understanding of the reality.`, link: "https://x.com/guga/status/1944495526549880903" },
+    { text: `If a physicist blunders in psychology, it doesn't invalidate his work in physics.`, link: "https://x.com/guga/status/1942917315269722343" },
+    { text: `When you're 10 good books in in life discard, discard, discard`, link: "https://x.com/guga/status/1942556919572619704" },
+    { text: `The clearer your judgment, the greater the cost of losing your peace.`, link: "https://x.com/guga/status/1942479796899848242" },
+    { text: `Focus on process-oriented joy rather than one-off spikes of pleasure.`, link: "https://x.com/guga/status/1942477417953612112" },
+    { text: `The most Christian people are the ones that try to display it the least.`, link: "https://x.com/guga/status/1942205954595950881" },
+    { text: `Learn to find satisfaction in not making the decision, rather than making one.`, link: "https://x.com/guga/status/1942185166220185955" },
+    { text: `In the beginning social resistance is intense.
+
+You have to push through it with self-encouragement.`, link: "https://x.com/guga/status/1941096624836780221" },
+    { text: `Profound understanding of evolutionary psychology is like mind-reading.`, link: "https://x.com/guga/status/1940759615488380943" },
+    { text: `Having deep knowledge about something is like being a magician. You can bring things about in future just because you understand.`, link: "https://x.com/guga/status/1940312176214032733" },
+    { text: `"Absorb what is useful, discard what is not, keep searching."
+
+-Bruce Lee`, link: "https://x.com/guga/status/1939689673439191153" },
+    { text: `In the age of clickbait titles, video descriptions carry more weight.`, link: "https://x.com/guga/status/1939418443804999756" },
+    { text: `Being late shows a lack of predictive competence.`, link: "https://x.com/guga/status/1939292296052175234" },
+    { text: `When you're in the exploring phase, those who are already exploiting will hold you back.
+
+They have enough to play it safe. 
+
+You can't emulate that.
+
+Getting there requires a taste of high-risk, break-things mode.`, link: "https://x.com/guga/status/1937291928548352139" },
+    { text: `The amount of alertness that disturbs your peace is counterproductive.`, link: "https://x.com/guga/status/1937056552105455741" },
+    { text: `Feel the emotion but follow the thought (judgement).`, link: "https://x.com/guga/status/1936786414240178517" },
+    { text: `The less you know what you're doing, the easier it is to be persuaded into anything.
+
+How can you say no if you don’t even know what to say yes to?`, link: "https://x.com/guga/status/1936389096928378986" },
+    { text: `Consequences are neutral. They are simply things that occur.  
+
+Whether they are good or bad depends on your interests. Any decision can be an upside or a downside depending on what you want.`, link: "https://x.com/guga/status/1935834848809111601" },
+    { text: `Being good at meditation sucks when all you feel is pain.`, link: "https://x.com/guga/status/1935789541819859240" },
+    { text: `Growing a beard doesn’t entitle you to call yourself a man.`, link: "https://x.com/guga/status/1935640471075770714" },
+    { text: `Wanting the output without having done years of input is crazy.`, link: "https://x.com/guga/status/1934692112705966412" },
+    { text: `First-peinciples thinking automatically makes you anti-mimetic.`, link: "https://x.com/guga/status/1934247953054503317" },
+    { text: `Be the kind of man who goes through hell without a single complaint.`, link: "https://x.com/guga/status/1934071534064111828" },
+    { text: `Good timber does not grow with ease:
+The stronger wind, the stronger trees;
+The further sky, the greater length;
+The more the storm, the more the strength.
+By sun and cold, by rain and snow,
+In trees and men good timbers grow.`, link: "https://x.com/guga/status/1933241534368870433" },
+    { text: `Spend the first 25 years of your life getting high level literacy and numeracy and you will move mountains.`, link: "https://x.com/guga/status/1932926477290320341" },
+    { text: `It's crazy how fast cold-minded decision-making gets thrown out of window once you fall for someone.`, link: "https://x.com/guga/status/1932919872071073860" },
+    { text: `Healing a broken relationship takes both a verbal apology and actions to back it up.
+
+However, some relationships are better left broken because of the blatantly obvious discrepancies and misalignments.`, link: "https://x.com/guga/status/1932918522381832357" },
+    { text: `Explanatory power gives you predictive power.
+
+That's the best way to overcome uncertainty.`, link: "https://x.com/guga/status/1932567450765205661" },
+    { text: `"The best way to know who your real friend is how they react when you win."
+
+-Alex Hormozi`, link: "https://x.com/guga/status/1932564855510151261" },
+    { text: `In the 1900s success was much more circumstantial. 
+
+Now it's much more will-based.`, link: "https://x.com/guga/status/1932556198982943213" },
+    { text: `Mindfulness is most valuable when you're young and full of vigor.
+
+You meditate on the feeling that this is your peak state.
+
+you’re not getting any younger, so you might as well enjoy it.`, link: "https://x.com/guga/status/1932536434491339236" },
+    { text: `Gratitude is fine from time to time. But don’t let it turn into complacency. There are always more problems to solve, more people to help, more suffering to eliminate.`, link: "https://x.com/guga/status/1932523361277469072" },
+    { text: `It takes a character out of the ordinary not to become resentful after a major physical trauma.`, link: "https://x.com/guga/status/1932271822793593154" },
+    { text: `The first step to a good conversation is both parties agreeing they might be wrong.`, link: "https://x.com/guga/status/1932170768659661010" },
+    { text: `Everything is possible given the right knowledge and time.`, link: "https://x.com/guga/status/1932077746470924786" },
+    { text: `People who urge rural people to stay in villages try to maintain their status at the expense of others' success.`, link: "https://x.com/guga/status/1932077219712500143" },
+    { text: `You don’t need hustle. 
+
+You need leverage.`, link: "https://x.com/guga/status/1930803158051086772" },
+    { text: `Matt Ridley's work is especially revelatory for novices in rational optimism.
+
+Read more of him and less of modern Cassandras like Harari.`, link: "https://x.com/guga/status/1930788360047767989" },
+    { text: `Self-development books belong to the lowest tier.`, link: "https://x.com/guga/status/1930591680614277573" }
+  ];
+
+  // ---- WORKS ----
+  const works = [
+    {
+      title: "Personal Health & Tracking Tool",
+      desc: "Single-page tool for sleep, diet, and exercise tracking.",
+      link: "#"
+    },
+    {
+      title: "Project name here",
+      desc: "One-line description of what it is.",
+      link: "#"
+    }
+  ];
+
+  // ---- CONTACT ----
+  const contact = [
+    { label: "Email", value: "you@example.com", href: "mailto:you@example.com" },
+    { label: "X", value: "@yourhandle", href: "https://x.com/yourhandle" }
+  ];
+
+</script>
+
+<script>
+  // ============================================================
+  // RENDERING LOGIC — you generally don't need to edit below here
+  // ============================================================
+
+  // ---- Deterministic "tweet of the day" ----
+  // Same tweet all day for everyone; changes at local midnight.
+  // Uses a hash of the date string so the order looks shuffled,
+  // not a visible repeating cycle like a plain index++ would.
+  function hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0; // keep it a 32-bit int
+    }
+    return Math.abs(hash);
+  }
+
+  function pickTweetOfTheDay(list) {
+    if (!list || list.length === 0) return null;
+    const now = new Date();
+    const dateKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    const idx = hashString(dateKey) % list.length;
+    return list[idx];
+  }
+
+  const todays = pickTweetOfTheDay(tweets);
+
+  if (todays) {
+    document.getElementById('tweet-text').textContent = todays.text;
+  } else {
+    document.getElementById('tweet-text').textContent = 'No tweets added yet — fill in the `tweets` array.';
+  }
+
+  // ---- Works list ----
+  function buildWorkEntry({ title, desc, link }) {
+    const a = document.createElement('a');
+    a.className = 'entry';
+    a.href = link || '#';
+    if (link && link.startsWith('http')) {
+      a.target = '_blank';
+      a.rel = 'noopener';
+    }
+    const t = document.createElement('p');
+    t.className = 'entry-title';
+    t.textContent = title;
+    const d = document.createElement('p');
+    d.className = 'entry-desc';
+    d.textContent = desc || '';
+    a.appendChild(t);
+    a.appendChild(d);
+    return a;
+  }
+
+  const worksList = document.getElementById('works-list');
+  works.forEach(w => worksList.appendChild(buildWorkEntry(w)));
+
+  // ---- Contact list ----
+  const contactList = document.getElementById('contact-list');
+  contact.forEach(c => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = c.href;
+    a.textContent = c.value;
+    if (c.href.startsWith('http')) {
+      a.target = '_blank';
+      a.rel = 'noopener';
+    }
+    li.textContent = c.label + ': ';
+    li.appendChild(a);
+    contactList.appendChild(li);
+  });
+
+  // ---- Simple page router (no reload, hash-based) ----
+  const pages = {
+    home: document.getElementById('page-home'),
+    works: document.getElementById('page-works'),
+    contact: document.getElementById('page-contact')
+  };
+
+  function showPage(name) {
+    Object.values(pages).forEach(p => p.classList.remove('active'));
+    (pages[name] || pages.home).classList.add('active');
+  }
+
+  function routeFromHash() {
+    const hash = window.location.hash.replace('#', '');
+    showPage(pages[hash] ? hash : 'home');
+  }
+
+  document.querySelectorAll('nav.top a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = link.getAttribute('data-page');
+      window.location.hash = target;
+    });
+  });
+
+  window.addEventListener('hashchange', routeFromHash);
+  routeFromHash();
+</script>
+
+</body>
+</html>
